@@ -306,12 +306,39 @@ Vuelos vuelos = new Vuelos();
 
     private void tbResultadoVuelosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbResultadoVuelosMouseClicked
         // TODO add your handling code here:
+       // Verificar si se ha realizado una búsqueda válida
+    if (busquedaId != -1) {
+        // Mostrar los resultados de búsqueda (esto podría no ser necesario aquí)
         Vuelos vuelos = new Vuelos();
+        vuelos.MostrarResultadosBusquedaSimple(tbResultadoVuelos, busquedaId);
+
+        // Verificar el tipo de evento de clic (por ejemplo, un solo clic)
+        if (evt.getClickCount() == 1) {
+            int selectedRow = tbResultadoVuelos.getSelectedRow();
+            if (selectedRow != -1) {
+                // Obtener los datos del vuelo seleccionado
+                String aerolinea = tbResultadoVuelos.getValueAt(selectedRow, 7).toString();
+                String horario = tbResultadoVuelos.getValueAt(selectedRow, 8).toString();
+                int idBusqueda = (int) tbResultadoVuelos.getValueAt(selectedRow, 0);
+
+                // Mensaje de éxito al seleccionar el vuelo
+                JOptionPane.showMessageDialog(this, "Vuelo seleccionado con éxito");
+
+                // Llamar al método para guardar la selección del vuelo en la clase Vuelos
+                vuelos.GuardarSeleccionVuelo(idBusqueda, aerolinea, horario);
+
+                // Aquí puedes abrir la nueva interfaz si es necesario
+            }
+        }
+    } else {
+        JOptionPane.showMessageDialog(null, "No se ha realizado ninguna búsqueda reciente.");
+    }
+        /* Vuelos vuelos = new Vuelos();
     if (busquedaId != -1) {
         vuelos.MostrarResultadosBusquedaSimple(tbResultadoVuelos, busquedaId);
     } else {
         JOptionPane.showMessageDialog(null, "No se ha realizado ninguna búsqueda reciente.");
-    }
+    }*/
     }//GEN-LAST:event_tbResultadoVuelosMouseClicked
 
     /**

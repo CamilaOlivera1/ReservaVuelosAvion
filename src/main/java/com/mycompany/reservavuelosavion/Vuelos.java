@@ -34,6 +34,7 @@ import java.util.Random;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -342,7 +343,7 @@ public int GuardarDetallesBusqueda(int busquedaId, int origenId, int destinoId, 
     }
 }
 
-public void MostrarResultadosBusquedaSimple(JTable tabla, int busquedaId) {
+    public void MostrarResultadosBusquedaSimple(JTable tabla, int busquedaId) {
         Coneccion objetoConexion = new Coneccion();
         DefaultTableModel modeloTabla = new DefaultTableModel();
 
@@ -403,75 +404,89 @@ public void MostrarResultadosBusquedaSimple(JTable tabla, int busquedaId) {
         }
     }
 
-    class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText((value == null) ? "" : value.toString());
-            return this;
-        }
+class ButtonRenderer extends JButton implements TableCellRenderer {
+    public ButtonRenderer() {
+        setOpaque(true);
     }
 
-    class ButtonEditor extends DefaultCellEditor {
-        protected JButton button;
-        private String label;
-        private boolean isPushed;
-        private JTable table;
-
-        public ButtonEditor(JCheckBox checkBox, JTable table) {
-            super(checkBox);
-            this.table = table;
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    fireEditingStopped();
-                }
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            label = (value == null) ? "" : value.toString();
-            button.setText(label);
-            isPushed = true;
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            if (isPushed) {
-                // Obtener los datos de la fila seleccionada
-                int selectedRow = table.getSelectedRow();
-                String aerolinea = (String) table.getValueAt(selectedRow, 7);
-                String horario = (String) table.getValueAt(selectedRow, 8);
-                int idBusqueda = (Integer) table.getValueAt(selectedRow, 0); // Suponiendo que el ID está en la primera columna
-
-                // Acción a realizar cuando se presiona el botón
-                JOptionPane.showMessageDialog(button, "Elegir Vuelo: " + label + " en la fila " + selectedRow);
-                // Aquí llamamos al método para guardar la selección del vuelo
-                GuardarSeleccionVuelo(idBusqueda, aerolinea, horario);
-            }
-            isPushed = false;
-            return label;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            isPushed = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
+    @Override
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        setText((value == null) ? "" : value.toString());
+        return this;
     }
-
+}
     public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
+        Coneccion objetoConexion = new Coneccion();
+        try (Connection conexion = objetoConexion.estableceConexion();
+             PreparedStatement pstmt = conexion.prepareStatement("UPDATE busqueda_detalle SET aerolinea = ?, horario = ? WHERE fkbusqueda = ?")) {
+            pstmt.setString(1, aerolinea);
+            pstmt.setString(2, horario);
+            pstmt.setInt(3, idBusqueda);
+            pstmt.executeUpdate();
+            // Mostrar mensaje de éxito
+            JOptionPane.showMessageDialog(null, "Selección de vuelo exitosa");
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al guardar la selección del vuelo: " + e.getMessage());
+        }
+    }
+
+class ButtonEditor extends DefaultCellEditor {
+    protected JButton button;
+    private String label;
+    private boolean isPushed;
+    private JTable table;
+    private int busquedaId;
+
+    public ButtonEditor(JCheckBox checkBox, JTable table) {
+        super(checkBox);
+        this.table = table;
+        button = new JButton();
+        button.setOpaque(true);
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fireEditingStopped();
+            }
+        });
+    }
+
+    @Override
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        label = (value == null) ? "" : value.toString();
+        button.setText(label);
+        isPushed = true;
+        this.busquedaId = (Integer) table.getValueAt(row, 0); // Asignar busquedaId desde la tabla
+        return button;
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        if (isPushed) {
+            String aerolinea = (String) table.getValueAt(table.getSelectedRow(), 7);
+            String horario = (String) table.getValueAt(table.getSelectedRow(), 8);
+
+            // Acción a realizar cuando se presiona el botón
+            JOptionPane.showMessageDialog(button, "Selección de vuelo exitosa");
+
+            // Aquí llamamos al método para guardar la selección del vuelo
+            GuardarSeleccionVuelo(busquedaId, aerolinea, horario);
+        }
+        isPushed = false;
+        return label;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        isPushed = false;
+        return super.stopCellEditing();
+    }
+
+    @Override
+    protected void fireEditingStopped() {
+        super.fireEditingStopped();
+    }
+}
+
+   /* public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
         Coneccion objetoConexion = new Coneccion();
         try (Connection conexion = objetoConexion.estableceConexion();
              PreparedStatement pstmt = conexion.prepareStatement("UPDATE busqueda_detalle SET aerolinea = ?, horario = ? WHERE fkbusqueda = ?")) {
@@ -482,7 +497,7 @@ public void MostrarResultadosBusquedaSimple(JTable tabla, int busquedaId) {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error al guardar la selección del vuelo: " + e.getMessage());
         }
-    }
+    }*/
 
 
 
