@@ -343,68 +343,61 @@ public int GuardarDetallesBusqueda(int busquedaId, int origenId, int destinoId, 
     }
 }
 
-    public void MostrarResultadosBusquedaSimple(JTable tabla, int busquedaId) {
-        Coneccion objetoConexion = new Coneccion();
-        DefaultTableModel modeloTabla = new DefaultTableModel();
-
-        // Definir columnas
-        modeloTabla.addColumn("Origen");
-        modeloTabla.addColumn("Destino");
-        modeloTabla.addColumn("Fecha Viaje");
-        modeloTabla.addColumn("Adultos");
-        modeloTabla.addColumn("Niños");
-        modeloTabla.addColumn("Bebés");
-        modeloTabla.addColumn("Clase");
-        modeloTabla.addColumn("Aerolínea");
-        modeloTabla.addColumn("Horario");
-        modeloTabla.addColumn("Duración");
-        modeloTabla.addColumn("Precio");
-        modeloTabla.addColumn("Selección");
-
-        String consulta = "SELECT b.fkorigen, b.fkdestino, b.fecha_viaje, b.cant_adultos, b.cant_niños, b.cant_bebes, b.fkclase, "
-                        + "bd.aerolinea, bd.horario, bd.duracion, bd.precio "
-                        + "FROM busqueda b "
-                        + "JOIN busqueda_detalle bd ON b.id = bd.fkbusqueda "
-                        + "WHERE b.id = ?";
-
-        try (Connection conexion = objetoConexion.estableceConexion();
-             PreparedStatement pst = conexion.prepareStatement(consulta)) {
-
-            pst.setInt(1, busquedaId);
-            ResultSet rs = pst.executeQuery();
-
-            while (rs.next()) {
-                String origen = ObtenerNombrePorId("origen", rs.getInt("fkorigen"));
-                String destino = ObtenerNombrePorId("destino", rs.getInt("fkdestino"));
-                String fechaViaje = rs.getString("fecha_viaje");
-                int cantAdultos = rs.getInt("cant_adultos");
-                int cantNiños = rs.getInt("cant_niños");
-                int cantBebés = rs.getInt("cant_bebes");
-                String clase = ObtenerNombrePorId("clase", rs.getInt("fkclase"));
-                String aerolinea = rs.getString("aerolinea");
-                String horario = rs.getString("horario");
-                Time duracion = rs.getTime("duracion"); // Obtener duración como TIME
-                double precio = rs.getDouble("precio");
-
-                // Convertir Time a String
-                String duracionStr = duracion.toString();
-
-                Object[] fila = {origen, destino, fechaViaje, cantAdultos, cantNiños, cantBebés, clase, aerolinea, horario, duracionStr, precio, "Elegir Vuelo"};
-                modeloTabla.addRow(fila);
-            }
-
-            tabla.setModel(modeloTabla);
-
-            // Agregar el ButtonRenderer y ButtonEditor a la columna de Selección
-            tabla.getColumnModel().getColumn(11).setCellRenderer(new ButtonRenderer());
-            tabla.getColumnModel().getColumn(11).setCellEditor(new ButtonEditor(new JCheckBox(), tabla));
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al mostrar resultados de búsqueda: " + e.getMessage());
+public void MostrarResultadosBusquedaConSeleccion(JTable tabla, int busquedaId) {
+    Coneccion objetoConexion = new Coneccion();
+    Connection conexion = objetoConexion.estableceConexion();
+    DefaultTableModel model = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 0; // Hacer que solo la primera columna sea editable (para el botón)
         }
-    }
+    };
 
-class ButtonRenderer extends JButton implements TableCellRenderer {
+    String sql = "SELECT b.fkclase, b.cant_adultos, b.cant_niños, b.cant_bebes, o.detalle AS origen, d.detalle AS destino, b.fecha_viaje, bd.aerolinea, bd.horario, bd.duracion, bd.precio FROM busqueda b JOIN origen o ON b.fkorigen = o.id JOIN destino d ON b.fkdestino = d.id JOIN busqueda_detalle bd ON b.id = bd.fkbusqueda WHERE b.id = ?";
+
+    model.addColumn("Seleccionar");
+    model.addColumn("Clase");
+    model.addColumn("Cant. Adultos");
+    model.addColumn("Cant. Niños");
+    model.addColumn("Cant. Bebés");
+    model.addColumn("Origen");
+    model.addColumn("Destino");
+    model.addColumn("Fecha Viaje");
+    model.addColumn("Aerolínea");
+    model.addColumn("Horario");
+    model.addColumn("Duración");
+    model.addColumn("Precio");
+
+    tabla.setModel(model);
+
+    try (PreparedStatement pst = conexion.prepareStatement(sql)) {
+        pst.setInt(1, busquedaId);
+
+        try (ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    "Seleccionar",
+                    ObtenerNombrePorId("clase", rs.getInt("fkclase")),
+                    rs.getInt("cant_adultos"),
+                    rs.getInt("cant_niños"),
+                    rs.getInt("cant_bebes"),
+                    rs.getString("origen"),
+                    rs.getString("destino"),
+                    rs.getDate("fecha_viaje"),
+                    rs.getString("aerolinea"),
+                    rs.getString("horario"),
+                    rs.getString("duracion"),
+                    rs.getInt("precio")
+                });
+            }
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al mostrar los resultados de la búsqueda: " + e.toString());
+    }
+}
+
+public class ButtonRenderer extends JButton implements TableCellRenderer {
+
     public ButtonRenderer() {
         setOpaque(true);
     }
@@ -415,27 +408,12 @@ class ButtonRenderer extends JButton implements TableCellRenderer {
         return this;
     }
 }
-    public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
-        Coneccion objetoConexion = new Coneccion();
-        try (Connection conexion = objetoConexion.estableceConexion();
-             PreparedStatement pstmt = conexion.prepareStatement("UPDATE busqueda_detalle SET aerolinea = ?, horario = ? WHERE fkbusqueda = ?")) {
-            pstmt.setString(1, aerolinea);
-            pstmt.setString(2, horario);
-            pstmt.setInt(3, idBusqueda);
-            pstmt.executeUpdate();
-            // Mostrar mensaje de éxito
-            JOptionPane.showMessageDialog(null, "Selección de vuelo exitosa");
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la selección del vuelo: " + e.getMessage());
-        }
-    }
 
-class ButtonEditor extends DefaultCellEditor {
+public class ButtonEditor extends DefaultCellEditor {
     protected JButton button;
     private String label;
     private boolean isPushed;
     private JTable table;
-    private int busquedaId;
 
     public ButtonEditor(JCheckBox checkBox, JTable table) {
         super(checkBox);
@@ -454,21 +432,15 @@ class ButtonEditor extends DefaultCellEditor {
         label = (value == null) ? "" : value.toString();
         button.setText(label);
         isPushed = true;
-        this.busquedaId = (Integer) table.getValueAt(row, 0); // Asignar busquedaId desde la tabla
         return button;
     }
 
     @Override
     public Object getCellEditorValue() {
         if (isPushed) {
-            String aerolinea = (String) table.getValueAt(table.getSelectedRow(), 7);
-            String horario = (String) table.getValueAt(table.getSelectedRow(), 8);
-
-            // Acción a realizar cuando se presiona el botón
-            JOptionPane.showMessageDialog(button, "Selección de vuelo exitosa");
-
-            // Aquí llamamos al método para guardar la selección del vuelo
-            GuardarSeleccionVuelo(busquedaId, aerolinea, horario);
+            // Accion del botón
+            int row = table.getSelectedRow();
+            ConfirmarSeleccion(table, row);
         }
         isPushed = false;
         return label;
@@ -486,6 +458,68 @@ class ButtonEditor extends DefaultCellEditor {
     }
 }
 
+public void ConfirmarSeleccion(JTable table, int row) {
+    String clase = table.getValueAt(row, 1).toString();
+    int adultos = Integer.parseInt(table.getValueAt(row, 2).toString());
+    int niños = Integer.parseInt(table.getValueAt(row, 3).toString());
+    int bebes = Integer.parseInt(table.getValueAt(row, 4).toString());
+    String origen = table.getValueAt(row, 5).toString();
+    String destino = table.getValueAt(row, 6).toString();
+    String fechaViaje = table.getValueAt(row, 7).toString();
+    String aerolinea = table.getValueAt(row, 8).toString();
+    String horario = table.getValueAt(row, 9).toString();
+    String duracion = table.getValueAt(row, 10).toString();
+    String precio = table.getValueAt(row, 11).toString();
+
+    int confirmar = JOptionPane.showConfirmDialog(null, "¿Desea confirmar la siguiente selección?\n\n" +
+            "Clase: " + clase + "\n" +
+            "Adultos: " + adultos + "\n" +
+            "Niños: " + niños + "\n" +
+            "Bebés: " + bebes + "\n" +
+            "Origen: " + origen + "\n" +
+            "Destino: " + destino + "\n" +
+            "Fecha de Viaje: " + fechaViaje + "\n" +
+            "Aerolínea: " + aerolinea + "\n" +
+            "Horario: " + horario + "\n" +
+            "Duración: " + duracion + "\n" +
+            "Precio: " + precio, "Confirmar Selección", JOptionPane.YES_NO_OPTION);
+
+    if (confirmar == JOptionPane.YES_OPTION) {
+        // Aquí puedes manejar lo que sucede después de confirmar la selección
+        JOptionPane.showMessageDialog(null, "Selección confirmada.");
+        // Navegar a la siguiente pantalla o realizar la acción correspondiente
+    }
+}
+
+
+public void guardarSeleccionVuelo(int busquedaId, String aerolinea, String horario) {
+    // Lógica para guardar la selección del vuelo en la base de datos
+    // Esto puede implicar una actualización en la tabla 'busqueda' o una inserción en otra tabla relacionada
+    Connection con = null;
+    PreparedStatement ps = null;
+
+    try {
+        Coneccion objetoConexion = new Coneccion();
+        con = objetoConexion.estableceConexion();
+        
+        // Supongamos que estás actualizando una tabla llamada 'busqueda_detalle'
+        String sql = "UPDATE busqueda_detalle SET aerolinea = ?, horario = ? WHERE id = ?";
+        ps = con.prepareStatement(sql);
+        ps.setString(1, aerolinea);
+        ps.setString(2, horario);
+        ps.setInt(3, busquedaId);
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    } finally {
+        try {
+            if (ps != null) ps.close();
+            if (con != null) con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
    /* public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
         Coneccion objetoConexion = new Coneccion();
         try (Connection conexion = objetoConexion.estableceConexion();
