@@ -342,7 +342,6 @@ public int GuardarDetallesBusqueda(int busquedaId, int origenId, int destinoId, 
         return -1;
     }
 }
-
 public void MostrarResultadosBusquedaConSeleccion(JTable tabla, int busquedaId) {
     Coneccion objetoConexion = new Coneccion();
     Connection conexion = objetoConexion.estableceConexion();
@@ -353,9 +352,10 @@ public void MostrarResultadosBusquedaConSeleccion(JTable tabla, int busquedaId) 
         }
     };
 
-    String sql = "SELECT b.fkclase, b.cant_adultos, b.cant_niños, b.cant_bebes, o.detalle AS origen, d.detalle AS destino, b.fecha_viaje, bd.aerolinea, bd.horario, bd.duracion, bd.precio FROM busqueda b JOIN origen o ON b.fkorigen = o.id JOIN destino d ON b.fkdestino = d.id JOIN busqueda_detalle bd ON b.id = bd.fkbusqueda WHERE b.id = ?";
+    String sql = "SELECT bd.id, b.fkclase, b.cant_adultos, b.cant_niños, b.cant_bebes, o.detalle AS origen, d.detalle AS destino, b.fecha_viaje, bd.aerolinea, bd.horario, bd.duracion, bd.precio FROM busqueda b JOIN origen o ON b.fkorigen = o.id JOIN destino d ON b.fkdestino = d.id JOIN busqueda_detalle bd ON b.id = bd.fkbusqueda WHERE b.id = ?";
 
-    model.addColumn("Seleccionar");
+    model.addColumn("Seleccionar"); // Columna para el botón o texto
+    model.addColumn("ID Detalle"); // Nueva columna para almacenar el ID de busqueda_detalle
     model.addColumn("Clase");
     model.addColumn("Cant. Adultos");
     model.addColumn("Cant. Niños");
@@ -377,6 +377,7 @@ public void MostrarResultadosBusquedaConSeleccion(JTable tabla, int busquedaId) 
             while (rs.next()) {
                 model.addRow(new Object[]{
                     "Seleccionar",
+                    rs.getInt("id"), // Añadir el ID de busqueda_detalle
                     ObtenerNombrePorId("clase", rs.getInt("fkclase")),
                     rs.getInt("cant_adultos"),
                     rs.getInt("cant_niños"),
@@ -520,22 +521,6 @@ public void guardarSeleccionVuelo(int busquedaId, String aerolinea, String horar
         }
     }
 }
-
-   /* public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
-        Coneccion objetoConexion = new Coneccion();
-        try (Connection conexion = objetoConexion.estableceConexion();
-             PreparedStatement pstmt = conexion.prepareStatement("UPDATE busqueda_detalle SET aerolinea = ?, horario = ? WHERE fkbusqueda = ?")) {
-            pstmt.setString(1, aerolinea);
-            pstmt.setString(2, horario);
-            pstmt.setInt(3, idBusqueda);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la selección del vuelo: " + e.getMessage());
-        }
-    }*/
-
-
-
 
 public String ObtenerNombrePorId(String tabla, int id) {
     Coneccion objetoConexion = new Coneccion();

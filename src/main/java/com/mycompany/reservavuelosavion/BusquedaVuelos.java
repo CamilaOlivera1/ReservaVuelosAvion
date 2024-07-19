@@ -311,52 +311,50 @@ Vuelos vuelos = new Vuelos();
         if (evt.getClickCount() == 1) {
             int selectedRow = tbResultadoVuelos.getSelectedRow();
             if (selectedRow != -1) {
-                // Obtener los datos del vuelo seleccionado
-                String fechaDeViaje = tbResultadoVuelos.getValueAt(selectedRow, 7).toString();
-                String aerolinea = tbResultadoVuelos.getValueAt(selectedRow, 8).toString();
-                String horario = tbResultadoVuelos.getValueAt(selectedRow, 9).toString();
-                String precio = tbResultadoVuelos.getValueAt(selectedRow, 11).toString(); // Asegúrate de obtener el precio correctamente
+                // Obtener el ID de busqueda_detalle
+                Object busquedaDetalleIdObj = tbResultadoVuelos.getValueAt(selectedRow, 1); // Índice 1 para la columna del ID
 
-                // Construir el mensaje
-                String mensaje = "Fecha: " + fechaDeViaje + "\n" +
-                                 "Aerolínea: " + aerolinea + "\n" +
-                                 "Horario: " + horario + "\n" +
-                                 "Precio: $" + precio;
+                if (busquedaDetalleIdObj != null && busquedaDetalleIdObj instanceof Integer) {
+                    int busquedaDetalleId = (Integer) busquedaDetalleIdObj;
 
-                int confirmar = JOptionPane.showConfirmDialog(this, 
-                        "¿Desea confirmar la selección del vuelo?\n\n" + mensaje, 
-                        "Confirmar Selección", JOptionPane.YES_NO_OPTION);
+                    // Obtener los datos del vuelo seleccionado
+                    String fechaDeViaje = tbResultadoVuelos.getValueAt(selectedRow, 8).toString();
+                    String aerolinea = tbResultadoVuelos.getValueAt(selectedRow, 9).toString();
+                    String horario = tbResultadoVuelos.getValueAt(selectedRow, 10).toString();
+                    String precio = tbResultadoVuelos.getValueAt(selectedRow, 12).toString(); // Asegúrate de obtener el precio correctamente
 
-                if (confirmar == JOptionPane.YES_OPTION) {
-                    // Crear una instancia de la clase Pasajeros
-                    Pasajero pasajero = new Pasajero();
+                    // Construir el mensaje
+                    String mensaje = "Fecha: " + fechaDeViaje + "\n" +
+                                     "Aerolínea: " + aerolinea + "\n" +
+                                     "Horario: " + horario + "\n" +
+                                     "Precio: $" + precio;
 
-                    // Configurar el ID de la búsqueda de detalle y el ID del usuario
-                    pasajero.setBusquedaDetalleIdSeleccionada(busquedaId);
+                    int confirmar = JOptionPane.showConfirmDialog(this, 
+                            "¿Desea confirmar la selección del vuelo?\n\n" + mensaje, 
+                            "Confirmar Selección", JOptionPane.YES_NO_OPTION);
 
-                    // Obtener el ID del usuario desde SesionUtil
-                    int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
-                    pasajero.setUsuarioId(usuarioId); // Establecer el ID del usuario en Pasajeros
+                    if (confirmar == JOptionPane.YES_OPTION) {
+                        // Crear una instancia de la clase Pasajero
+                        Pasajero pasajero = new Pasajero();
 
-                    // Llamar al método para guardar la reserva
-                    pasajero.guardarReserva();
+                        // Configurar el ID de la búsqueda de detalle y el ID del usuario
+                        pasajero.setBusquedaDetalleIdSeleccionada(busquedaDetalleId);
 
-                    //JOptionPane.showMessageDialog(this, "Reserva guardada con éxito.");
+                        // Obtener el ID del usuario desde SesionUtil
+                        int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+                        pasajero.setUsuarioId(usuarioId); // Establecer el ID del usuario en Pasajero
 
-                    
+                        // Llamar al método para guardar la reserva
+                        pasajero.guardarReserva();
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "El valor de la columna ID no es válido.");
                 }
             }
         }
     } else {
         JOptionPane.showMessageDialog(null, "No se ha realizado ninguna búsqueda reciente.");
     }
-
-        /* Vuelos vuelos = new Vuelos();
-    if (busquedaId != -1) {
-        vuelos.MostrarResultadosBusquedaSimple(tbResultadoVuelos, busquedaId);
-    } else {
-        JOptionPane.showMessageDialog(null, "No se ha realizado ninguna búsqueda reciente.");
-    }*/
     }//GEN-LAST:event_tbResultadoVuelosMouseClicked
 
     /**

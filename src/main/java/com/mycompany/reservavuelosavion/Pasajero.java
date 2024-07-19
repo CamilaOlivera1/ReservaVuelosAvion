@@ -6,13 +6,9 @@ package com.mycompany.reservavuelosavion;
 
 /*import com.toedter.calendar.JDateChooser;
 import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;*/
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,107 +38,48 @@ public class Pasajero {
         this.usuarioId = usuarioId;
     }
 
-    /*public void guardarReserva() {
-        // Obtener el ID del usuario autenticado
-        int usuarioId = obtenerIdUsuario();
-
-        // Obtener el ID de la búsqueda de detalle seleccionada
-        int busquedaDetalleId = obtenerBusquedaDetalleId();
-
-        // Conexión a la base de datos
-        Coneccion objetoConexion = new Coneccion();
-        Connection conexion = null;
-        PreparedStatement stmt = null;
-
-        try {
-            // Establecer la conexión
-            conexion = objetoConexion.estableceConexion();
-
-            // Sentencia SQL para insertar en la tabla reservas
-            String sql = "INSERT INTO reservas (fkbusqueda_detalle, usuario_id) VALUES (?, ?)";
-
-            // Preparar la sentencia
-            stmt = conexion.prepareStatement(sql);
-            stmt.setInt(1, busquedaDetalleId);
-            stmt.setInt(2, usuarioId);
-
-            // Ejecutar la inserción
-            int filasInsertadas = stmt.executeUpdate();
-            if (filasInsertadas > 0) {
-                JOptionPane.showMessageDialog(null, "Reserva guardada exitosamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo guardar la reserva.");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la reserva: " + e.getMessage());
-        } finally {
-            // Cerrar la conexión y el statement
-            try {
-                if (stmt != null) stmt.close();
-                objetoConexion.cerrarConexion();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
-            }
-        }
-    }*/
-
-    private int obtenerIdUsuario() {
+  /*  private int obtenerIdUsuario() {
         // Implementar la lógica para obtener el ID del usuario autenticado
-        return 1; // Ejemplo de retorno, reemplazar con la lógica real
-    }
-
-   /* private int obtenerBusquedaDetalleId() {
-        // Implementar la lógica para obtener el ID de la búsqueda de detalle seleccionada
-        return 1; // Ejemplo de retorno, reemplazar con la lógica real
+        return 1; 
     }*/
 
+public void guardarReserva() {
+    Coneccion objetoConexion = new Coneccion();
+    Connection conexion = null;
+    PreparedStatement pstmt = null;
 
-    public void guardarReserva() {
-        // Obtener el ID del usuario autenticado
-        int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+    try {
+        // Establecer la conexión a la base de datos
+        conexion = objetoConexion.estableceConexion();
 
-        // Obtener el ID de la búsqueda de detalle seleccionada
-        int busquedaDetalleId = obtenerBusquedaDetalleId();
+        // Consulta SQL para insertar una nueva reserva
+        String sql = "INSERT INTO reservas (fkbusqueda_detalle, usuario_id, fecha_reserva) VALUES (?, ?, CURRENT_TIMESTAMP)";
 
-        // Conexión a la base de datos
-        Coneccion objetoConexion = new Coneccion();
-        Connection conexion = null;
-        PreparedStatement stmt = null;
+        pstmt = conexion.prepareStatement(sql);
+        pstmt.setInt(1, busquedaDetalleIdSeleccionada);
+        pstmt.setInt(2, usuarioId);
 
+        // Ejecutar la consulta de inserción
+        int rowsInserted = pstmt.executeUpdate();
+
+        // Verificar si la inserción fue exitosa
+        if (rowsInserted > 0) {
+            JOptionPane.showMessageDialog(null, "Reserva guardada con éxito.");
+        } else {
+            JOptionPane.showMessageDialog(null, "No se pudo guardar la reserva.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al guardar la reserva: " + e.getMessage());
+    } finally {
         try {
-            // Establecer la conexión
-            conexion = objetoConexion.estableceConexion();
-
-            // Sentencia SQL para insertar en la tabla reservas
-            String sql = "INSERT INTO reservas (fkbusqueda_detalle, usuario_id) VALUES (?, ?)";
-
-            // Preparar la sentencia
-            stmt = conexion.prepareStatement(sql);
-            stmt.setInt(1, busquedaDetalleId);
-            stmt.setInt(2, usuarioId);
-
-            // Ejecutar la inserción
-            int filasInsertadas = stmt.executeUpdate();
-            if (filasInsertadas > 0) {
-                JOptionPane.showMessageDialog(null, "Reserva guardada exitosamente.");
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo guardar la reserva.");
-            }
+            // Cerrar el PreparedStatement y la conexión
+            if (pstmt != null) pstmt.close();
+            if (conexion != null) conexion.close();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al guardar la reserva: " + e.getMessage());
-        } finally {
-            // Cerrar la conexión y el statement
-            try {
-                if (stmt != null) stmt.close();
-                objetoConexion.cerrarConexion();
-            } catch (SQLException e) {
-                JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
-            }
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
         }
     }
+}
 
-    private int obtenerBusquedaDetalleId() {
-        // Implementar la lógica para obtener el ID de la búsqueda de detalle seleccionada
-        return 1; // Ejemplo de retorno, reemplazar con la lógica real
-    }
 }
