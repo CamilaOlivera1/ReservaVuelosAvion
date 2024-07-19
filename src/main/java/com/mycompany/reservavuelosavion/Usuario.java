@@ -208,7 +208,7 @@ public void MostrarNuevoCombo(JComboBox comboGenero) {
 }
 
 
-public boolean InicioSesion(JTextField paramCorreo, JPasswordField paramContraseña) {
+/*public boolean InicioSesion(JTextField paramCorreo, JPasswordField paramContraseña) {
     String correo = paramCorreo.getText();
     String contrasena = new String(paramContraseña.getPassword());
 
@@ -236,7 +236,71 @@ public boolean InicioSesion(JTextField paramCorreo, JPasswordField paramContrase
     } finally {
         objetoConexion.cerrarConexion();
     }
-}
+}*/
+
+/*public boolean InicioSesion(JTextField paramCorreo, JPasswordField paramContraseña) {
+    String correo = paramCorreo.getText();
+    String contrasena = new String(paramContraseña.getPassword());
+
+    Coneccion objetoConexion = new Coneccion();
+    Connection conexion = objetoConexion.estableceConexion();
+    try {
+        String consulta = "SELECT * FROM registro WHERE correo = ? AND contraseña = ?";
+        PreparedStatement pst = conexion.prepareStatement(consulta);
+        pst.setString(1, correo);
+        pst.setString(2, contrasena);
+        
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+            // Inicio de sesión exitoso
+            JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso");
+            int usuarioId = rs.getInt("id");
+            SesionUtil.establecerIdUsuarioAutenticado(usuarioId); // Guardar el ID del usuario en la sesión
+            return true;
+        } else {
+            // Credenciales incorrectas
+            JOptionPane.showMessageDialog(null, "Correo o contraseña incorrectos");
+            return false;
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al iniciar sesión: " + e.getMessage());
+        return false;
+    } finally {
+        objetoConexion.cerrarConexion();
+    }
+}*/
+
+public boolean InicioSesion(JTextField paramCorreo, JPasswordField paramContraseña) {
+        String correo = paramCorreo.getText();
+        String contrasena = new String(paramContraseña.getPassword());
+
+        Coneccion objetoConexion = new Coneccion();
+        Connection conexion = objetoConexion.estableceConexion();
+        try {
+            String consulta = "SELECT * FROM registro WHERE correo = ? AND contraseña = ?";
+            PreparedStatement pst = conexion.prepareStatement(consulta);
+            pst.setString(1, correo);
+            pst.setString(2, contrasena);
+
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                // Inicio de sesión exitoso
+                JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso");
+                int usuarioId = rs.getInt("id");
+                SesionUtil.establecerIdUsuarioAutenticado(usuarioId); // Guardar el ID del usuario en la sesión
+                return true;
+            } else {
+                // Credenciales incorrectas
+                JOptionPane.showMessageDialog(null, "Correo o contraseña incorrectos");
+                return false;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al iniciar sesión: " + e.getMessage());
+            return false;
+        } finally {
+            objetoConexion.cerrarConexion();
+        }
+    }
 
 public boolean OlvideMiContraseña(JTextField paramCorreo, JPasswordField paramNuevaContraseña, JPasswordField paramRepetirContraseña) {
     String correo = paramCorreo.getText();

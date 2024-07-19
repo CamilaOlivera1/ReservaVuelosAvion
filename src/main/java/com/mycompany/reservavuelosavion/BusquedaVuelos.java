@@ -305,14 +305,14 @@ Vuelos vuelos = new Vuelos();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void tbResultadoVuelosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbResultadoVuelosMouseClicked
-        // TODO add your handling code here:
-       // Verificar si se ha realizado una búsqueda válida
-          if (busquedaId != -1) {
+        // TODO add your handling code here:                                                                                           
+    // Verificar si se ha realizado una búsqueda válida
+    if (busquedaId != -1) {
         if (evt.getClickCount() == 1) {
             int selectedRow = tbResultadoVuelos.getSelectedRow();
             if (selectedRow != -1) {
                 // Obtener los datos del vuelo seleccionado
-                String fechaDeViaje =tbResultadoVuelos.getValueAt(selectedRow, 7).toString();
+                String fechaDeViaje = tbResultadoVuelos.getValueAt(selectedRow, 7).toString();
                 String aerolinea = tbResultadoVuelos.getValueAt(selectedRow, 8).toString();
                 String horario = tbResultadoVuelos.getValueAt(selectedRow, 9).toString();
                 String precio = tbResultadoVuelos.getValueAt(selectedRow, 11).toString(); // Asegúrate de obtener el precio correctamente
@@ -328,14 +328,22 @@ Vuelos vuelos = new Vuelos();
                         "Confirmar Selección", JOptionPane.YES_NO_OPTION);
 
                 if (confirmar == JOptionPane.YES_OPTION) {
-                    // Llamar al método para guardar la selección del vuelo en la clase Vuelos
-                    Vuelos vuelos = new Vuelos();
-                    vuelos.guardarSeleccionVuelo(busquedaId, aerolinea, horario);
+                    // Crear una instancia de la clase Pasajeros
+                    Pasajero pasajero = new Pasajero();
 
-                    JOptionPane.showMessageDialog(this, "Vuelo seleccionado con éxito.");
+                    // Configurar el ID de la búsqueda de detalle y el ID del usuario
+                    pasajero.setBusquedaDetalleIdSeleccionada(busquedaId);
 
-                    // Aquí puedes abrir la nueva interfaz si es necesario
-                    // por ejemplo, abrir la interfaz para ingresar información de pasajeros
+                    // Obtener el ID del usuario desde SesionUtil
+                    int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+                    pasajero.setUsuarioId(usuarioId); // Establecer el ID del usuario en Pasajeros
+
+                    // Llamar al método para guardar la reserva
+                    pasajero.guardarReserva();
+
+                    //JOptionPane.showMessageDialog(this, "Reserva guardada con éxito.");
+
+                    
                 }
             }
         }

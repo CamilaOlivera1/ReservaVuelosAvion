@@ -520,6 +520,7 @@ public void guardarSeleccionVuelo(int busquedaId, String aerolinea, String horar
         }
     }
 }
+
    /* public void GuardarSeleccionVuelo(int idBusqueda, String aerolinea, String horario) {
         Coneccion objetoConexion = new Coneccion();
         try (Connection conexion = objetoConexion.estableceConexion();
