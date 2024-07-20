@@ -9,13 +9,52 @@ package com.mycompany.reservavuelosavion;
  * @author Estudiante
  */
 public class InfoPasajero extends javax.swing.JDialog {
+    private int busquedaDetalleId;
+    private int usuarioId;
+    
+    public InfoPasajero(java.awt.Frame parent, boolean modal, int busquedaDetalleId, int usuarioId) {
+    super(parent, modal);
+    initComponents();
+    Usuario usuario = new Usuario();
+    usuario.MostrarNuevoCombo(ComboGenero);
+    this.busquedaDetalleId = busquedaDetalleId;
+    this.usuarioId = usuarioId;
+}
+        private int reservaId;
+    private String tipoPasajero;
+    private int indice;
 
+    public InfoPasajero(int reservaId, String tipoPasajero, int indice) {
+        this.reservaId = reservaId;
+        this.tipoPasajero = tipoPasajero;
+        this.indice = indice;
+        initComponents();
+        setTitle(tipoPasajero + " " + (indice + 1));
+    }
+
+/*private Connection conexion;
+    private int cantAdultos;
+    private int cantNinos;
+    private int cantBeBes;
+    private int busquedaId;
+
+    public InfoPasajero(java.awt.Frame parent, boolean modal, int cantAdultos, int cantNinos, int cantBeBes, int busquedaId) {
+        super(parent, modal);
+        initComponents();
+        this.conexion = new Coneccion().estableceConexion();
+        this.cantAdultos = cantAdultos;
+        this.cantNinos = cantNinos;
+        this.cantBeBes = cantBeBes;
+        this.busquedaId = busquedaId;
+    }*/
     /**
      * Creates new form InfoPasajero
      */
     public InfoPasajero(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        Usuario usuario= new Usuario();
+        usuario.MostrarNuevoCombo(ComboGenero);
     }
 
     /**
@@ -116,6 +155,11 @@ public class InfoPasajero extends javax.swing.JDialog {
 
         btnGuardar.setFont(new java.awt.Font("Yu Gothic UI Light", 0, 20)); // NOI18N
         btnGuardar.setText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -128,16 +172,15 @@ public class InfoPasajero extends javax.swing.JDialog {
                         .addGap(33, 33, 33)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel8)
-                                        .addComponent(jLabel7))
-                                    .addComponent(jLabel6))
-                                .addGap(38, 38, 38))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel7))
+                                .addComponent(jLabel6))
                             .addComponent(jLabel4)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel2)))
+                            .addComponent(jLabel2))
+                        .addGap(38, 38, 38))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel9)))
@@ -215,6 +258,13 @@ public class InfoPasajero extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+       // TODO add your handling code here
+       Pasajero pasajero = new Pasajero();
+       pasajero.GuardarPasajero(txtNombre, txtApellido, ComboGenero, txtDNI, txtPasaporte, txtNacionalidad, txtDireccion, JDateFechaNacimiento, busquedaDetalleId, usuarioId);
+       this.dispose();
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**
      * @param args the command line arguments

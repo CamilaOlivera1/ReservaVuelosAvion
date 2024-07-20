@@ -25,6 +25,14 @@ public class BusquedaVuelos extends javax.swing.JDialog {
         vuelos.MostrarDestinoCombo(comboDestino);
         vuelos.MostrarClaseCombo(comboClase);
     }
+    
+    private int obtenerCantidadTotalPasajeros() {
+    int adultos = (Integer) jSpinnerMayores.getValue();
+    int niños = (Integer) jSpinnerNiños.getValue();
+    int bebés = (Integer) jSpinnerBebés.getValue();
+    return adultos + niños + bebés;
+}
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -306,24 +314,21 @@ Vuelos vuelos = new Vuelos();
 
     private void tbResultadoVuelosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbResultadoVuelosMouseClicked
         // TODO add your handling code here:                                                                                           
-    // Verificar si se ha realizado una búsqueda válida
-    if (busquedaId != -1) {
+    // Verificar si se ha realizado una búsqueda válida    
+       if (busquedaId != -1) {
         if (evt.getClickCount() == 1) {
             int selectedRow = tbResultadoVuelos.getSelectedRow();
             if (selectedRow != -1) {
-                // Obtener el ID de busqueda_detalle
-                Object busquedaDetalleIdObj = tbResultadoVuelos.getValueAt(selectedRow, 1); // Índice 1 para la columna del ID
+                Object busquedaDetalleIdObj = tbResultadoVuelos.getValueAt(selectedRow, 1);
 
                 if (busquedaDetalleIdObj != null && busquedaDetalleIdObj instanceof Integer) {
                     int busquedaDetalleId = (Integer) busquedaDetalleIdObj;
 
-                    // Obtener los datos del vuelo seleccionado
                     String fechaDeViaje = tbResultadoVuelos.getValueAt(selectedRow, 8).toString();
                     String aerolinea = tbResultadoVuelos.getValueAt(selectedRow, 9).toString();
                     String horario = tbResultadoVuelos.getValueAt(selectedRow, 10).toString();
-                    String precio = tbResultadoVuelos.getValueAt(selectedRow, 12).toString(); // Asegúrate de obtener el precio correctamente
+                    String precio = tbResultadoVuelos.getValueAt(selectedRow, 12).toString();
 
-                    // Construir el mensaje
                     String mensaje = "Fecha: " + fechaDeViaje + "\n" +
                                      "Aerolínea: " + aerolinea + "\n" +
                                      "Horario: " + horario + "\n" +
@@ -334,18 +339,29 @@ Vuelos vuelos = new Vuelos();
                             "Confirmar Selección", JOptionPane.YES_NO_OPTION);
 
                     if (confirmar == JOptionPane.YES_OPTION) {
-                        // Crear una instancia de la clase Pasajero
                         Pasajero pasajero = new Pasajero();
-
-                        // Configurar el ID de la búsqueda de detalle y el ID del usuario
+                        
                         pasajero.setBusquedaDetalleIdSeleccionada(busquedaDetalleId);
-
-                        // Obtener el ID del usuario desde SesionUtil
                         int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
-                        pasajero.setUsuarioId(usuarioId); // Establecer el ID del usuario en Pasajero
-
-                        // Llamar al método para guardar la reserva
+                        pasajero.setUsuarioId(usuarioId);
+                        
                         pasajero.guardarReserva();
+
+                        
+                       // Obtener y mostrar la cantidad total de pasajeros
+            int totalPasajeros = obtenerCantidadTotalPasajeros();
+            System.out.println("Cantidad total de pasajeros: " + totalPasajeros);
+
+            // Mostrar el diálogo InfoPasajero para cada pasajero
+            //int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+            do {
+                InfoPasajero infoPasajeroDialog = new InfoPasajero(null, true, busquedaDetalleId, usuarioId);
+                infoPasajeroDialog.setVisible(true);
+                totalPasajeros--;
+            } while (totalPasajeros > 0);
+
+                        
+                        
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "El valor de la columna ID no es válido.");

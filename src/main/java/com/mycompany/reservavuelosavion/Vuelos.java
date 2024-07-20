@@ -6,6 +6,7 @@ package com.mycompany.reservavuelosavion;
 
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
