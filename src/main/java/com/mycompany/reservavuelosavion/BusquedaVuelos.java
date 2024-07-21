@@ -359,9 +359,11 @@ Vuelos vuelos = new Vuelos();
                 infoPasajeroDialog.setVisible(true);
                 totalPasajeros--;
             } while (totalPasajeros > 0);
+            
+            //MetodosPago metodosPago = new MetodosPago(null, true);
+                    MetodosPago metodosPagoDialog = new MetodosPago(null, true);
+                    metodosPagoDialog.setVisible(true);
 
-                        
-                        
                     }
                 } else {
                     JOptionPane.showMessageDialog(this, "El valor de la columna ID no es válido.");
