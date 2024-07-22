@@ -352,14 +352,14 @@ Vuelos vuelos = new Vuelos();
             int totalPasajeros = obtenerCantidadTotalPasajeros();
             System.out.println("Cantidad total de pasajeros: " + totalPasajeros);
 
-            // Mostrar el diálogo InfoPasajero para cada pasajero
+            //Mostrar el diálogo InfoPasajero para cada pasajero
             //int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
-           /* do {
+            /*do {
                 InfoPasajero infoPasajeroDialog = new InfoPasajero(null, true, busquedaDetalleId, usuarioId);
                 infoPasajeroDialog.setVisible(true);
                 totalPasajeros--;
-            } while (totalPasajeros > 0);
-            */
+            } while (totalPasajeros > 0);*/
+            
             
             //MetodosPago metodosPago = new MetodosPago(null, true);
                     MetodosPago metodosPagoDialog = new MetodosPago(null, true);
