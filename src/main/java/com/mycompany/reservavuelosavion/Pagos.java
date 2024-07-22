@@ -35,4 +35,23 @@ public class Pagos {
     }
 }
     
+        public void MostrarComboCuotas(JComboBox comboCuotas) {
+    Coneccion objetoConexion = new Coneccion();
+    String sql = "SELECT * FROM cuotas;";
+
+    try (Connection conexion = objetoConexion.estableceConexion();
+         Statement st = conexion.createStatement();
+         ResultSet rs = st.executeQuery(sql)) {
+
+        comboCuotas.removeAllItems();
+        
+        while (rs.next()) {
+            String nombreNuevo = rs.getString("cantCuota");
+            comboCuotas.addItem(nombreNuevo);
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "No se pudo mostrar combo metodo de Pago, error: " + e.toString());
+    }
+}
+    
 }

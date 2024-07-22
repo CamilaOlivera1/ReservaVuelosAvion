@@ -4,6 +4,8 @@
  */
 package com.mycompany.reservavuelosavion;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Estudiante
@@ -118,7 +120,19 @@ public class MetodosPago extends javax.swing.JDialog {
 
     private void btnRealizarPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRealizarPagoActionPerformed
         // TODO add your handling code here:
-        
+        String metodoSeleccionado = (String) ComboMetPago.getSelectedItem();
+
+        if (metodoSeleccionado != null) {
+            if (metodoSeleccionado.equals("Tarjeta de Crédito")) {
+                TarjetadeCredito tarjetaCreditoDialog = new TarjetadeCredito(null, true);
+                tarjetaCreditoDialog.setVisible(true);
+            } else if (metodoSeleccionado.equals("Tarjeta de Débito")) {
+                TarjetadeDebito tarjetaDebitoDialog = new TarjetadeDebito(null, true);
+                tarjetaDebitoDialog.setVisible(true);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione un método de pago.");
+        }
     }//GEN-LAST:event_btnRealizarPagoActionPerformed
 
     /**
