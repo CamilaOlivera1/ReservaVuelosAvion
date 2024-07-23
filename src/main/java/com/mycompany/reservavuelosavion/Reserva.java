@@ -434,4 +434,25 @@ public void actualizarTablaReservas(JTable jTable1, int usuarioId) {
     }
 }
     
+     
+     public void realizarCheckin(int idReserva) {
+    String consulta = "UPDATE reservas SET estado = 'Check-in realizado' WHERE id = ?";
+
+    try (Connection conexion = new Coneccion().estableceConexion();
+         PreparedStatement pstmt = conexion.prepareStatement(consulta)) {
+
+        pstmt.setInt(1, idReserva);
+        int rowsUpdated = pstmt.executeUpdate();
+
+        if (rowsUpdated > 0) {
+            System.out.println("Check-in realizado para la reserva con ID: " + idReserva);
+        } else {
+            System.out.println("No se pudo realizar el check-in para la reserva con ID: " + idReserva);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 }

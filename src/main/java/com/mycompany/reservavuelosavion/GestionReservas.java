@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.util.Date;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -79,6 +81,7 @@ public class GestionReservas extends javax.swing.JDialog {
         btnEliminar = new javax.swing.JButton();
         btnModificarFecha = new javax.swing.JButton();
         btnMostrarEstado = new javax.swing.JButton();
+        btnCheckin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -121,6 +124,13 @@ public class GestionReservas extends javax.swing.JDialog {
             }
         });
 
+        btnCheckin.setText(" Check-in");
+        btnCheckin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckinActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -136,7 +146,9 @@ public class GestionReservas extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnMostrarEstado)
-                            .addComponent(btnModificarFecha))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(btnCheckin)
+                                .addComponent(btnModificarFecha)))
                         .addGap(20, 20, 20))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -149,7 +161,9 @@ public class GestionReservas extends javax.swing.JDialog {
                         .addComponent(btnEliminar)
                         .addGap(36, 36, 36)
                         .addComponent(btnModificarFecha)
-                        .addGap(87, 87, 87)
+                        .addGap(36, 36, 36)
+                        .addComponent(btnCheckin)
+                        .addGap(28, 28, 28)
                         .addComponent(btnMostrarEstado))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(52, Short.MAX_VALUE))
@@ -236,6 +250,22 @@ public class GestionReservas extends javax.swing.JDialog {
     }
     }//GEN-LAST:event_btnMostrarEstadoActionPerformed
 
+    private void btnCheckinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckinActionPerformed
+        // TODO add your handling code here:                                                             
+    int filaSeleccionada = jTable1.getSelectedRow();
+    
+    if (filaSeleccionada >= 0) {
+        int idReserva = (int) jTable1.getValueAt(filaSeleccionada, 0);
+        Reserva reserva = new Reserva();
+
+        // Crear y mostrar el diálogo de check-in
+        CheckinDialog checkinDialog = new CheckinDialog(null, true, reserva, idReserva);
+        checkinDialog.setVisible(true);
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona una reserva para realizar el check-in.");
+    }
+    }//GEN-LAST:event_btnCheckinActionPerformed
+
     private void obtenerInformacionVuelo(int idBusquedaDetalle) {
     String sql = "SELECT b.fecha_viaje, bd.horario, CASE " +
                  "WHEN NOW() < bd.horario THEN 'A Tiempo' " +
@@ -314,6 +344,7 @@ public class GestionReservas extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCheckin;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnModificarFecha;
     private javax.swing.JButton btnMostrarEstado;
