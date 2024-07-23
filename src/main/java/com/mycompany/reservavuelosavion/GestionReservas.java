@@ -4,22 +4,65 @@
  */
 package com.mycompany.reservavuelosavion;
 
+import com.toedter.calendar.JDateChooser;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.util.Date;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Estudiante
  */
 public class GestionReservas extends javax.swing.JDialog {
-
+    private JDateChooser dateChooserFecha;
     /**
      * Creates new form GestionReservas
      */
     public GestionReservas(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-          Reserva reserva = new Reserva();
+                Reserva reserva = new Reserva();
+        int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+        reserva.mostrarReservas(jTable1, usuarioId);
+        configurarEditorDeCeldas();
+    }
+
+    private void configurarEditorDeCeldas() {
+        jTable1.getColumnModel().getColumn(3).setCellEditor(new DateChooserCellEditor());
+    }
+
+        /*dateChooserFecha = new JDateChooser();
+        jPanel1.add(dateChooserFecha);  // Agrega el JDateChooser al panel
+        dateChooserFecha.setBounds(400, 300, 150, 25);  // Ajusta la posición y el tamaño según tus necesidades
+
+        Reserva reserva = new Reserva();
+        int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+        reserva.mostrarReservas(jTable1, usuarioId);
+        configurarEditorDeCeldas();
+    }
+    private void configurarEditorDeCeldas() {
+        jTable1.getColumnModel().getColumn(3).setCellEditor(new DateChooserCellEditor());
+    }*/
+        
+        
+        
+        
+        
+         /* Reserva reserva = new Reserva();
           int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
         reserva.mostrarReservas(jTable1, usuarioId);
+                        configurarEditorDeCeldas();
+        // Configurar la columna de Fecha Reserva para usar el editor de celda personalizado
+    //jTable1.getColumnModel().getColumn(3).setCellEditor(new DateChooserCellEditor());
     }
+    
+        private void configurarEditorDeCeldas() {
+        jTable1.getColumnModel().getColumn(3).setCellEditor(new DateChooserCellEditor());
+    }*/
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,6 +77,8 @@ public class GestionReservas extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         btnEliminar = new javax.swing.JButton();
+        btnModificarFecha = new javax.swing.JButton();
+        btnMostrarEstado = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -62,27 +107,51 @@ public class GestionReservas extends javax.swing.JDialog {
             }
         });
 
+        btnModificarFecha.setText("Modificar Fecha");
+        btnModificarFecha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarFechaActionPerformed(evt);
+            }
+        });
+
+        btnMostrarEstado.setText("Información de Estado");
+        btnMostrarEstado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMostrarEstadoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 697, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(btnEliminar)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1034, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnEliminar)
+                        .addGap(39, 39, 39))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnMostrarEstado)
+                            .addComponent(btnModificarFecha))
+                        .addGap(20, 20, 20))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(btnEliminar)))
+                        .addGap(21, 21, 21)
+                        .addComponent(btnEliminar)
+                        .addGap(36, 36, 36)
+                        .addComponent(btnModificarFecha)
+                        .addGap(87, 87, 87)
+                        .addComponent(btnMostrarEstado))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(52, Short.MAX_VALUE))
         );
 
@@ -106,9 +175,9 @@ public class GestionReservas extends javax.swing.JDialog {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
-       Reserva reserva = new Reserva();
+       /*Reserva reserva = new Reserva();
           int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
-        reserva.mostrarReservas(jTable1, usuarioId);
+        reserva.mostrarReservas(jTable1, usuarioId);*/
     }//GEN-LAST:event_jTable1MouseClicked
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
@@ -118,6 +187,90 @@ public class GestionReservas extends javax.swing.JDialog {
     reserva.btnEliminarReservaActionPerformed(jTable1, usuarioId);
     }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void btnModificarFechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarFechaActionPerformed
+    int filaSeleccionada = jTable1.getSelectedRow();
+    if (filaSeleccionada >= 0) {
+        int idBusqueda = (int) jTable1.getValueAt(filaSeleccionada, 0);
+        Date nuevaFecha = (Date) jTable1.getValueAt(filaSeleccionada, 3); // Obtener la fecha directamente de la celda editada
+        if (nuevaFecha != null) {
+            java.sql.Date nuevaFechaSQL = new java.sql.Date(nuevaFecha.getTime());
+            Reserva reserva = new Reserva();
+            reserva.actualizarFechaViaje(idBusqueda, nuevaFechaSQL);
+            reserva.actualizarTablaReservas(jTable1, SesionUtil.obtenerIdUsuarioAutenticado());
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona una nueva fecha de viaje.");
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona una reserva para modificar.");
+    }
+
+        /*Reserva reserva = new Reserva();
+        int filaSeleccionada = jTable1.getSelectedRow();
+
+        if (filaSeleccionada >= 0) {
+            int idBusqueda = (int) jTable1.getValueAt(filaSeleccionada, 0); // Suponiendo que el ID de la reserva está en la primera columna
+            Date nuevaFechaViaje = (Date) jTable1.getValueAt(filaSeleccionada, 3); // Obtener la fecha directamente de la tabla
+
+            if (nuevaFechaViaje != null) {
+                reserva.actualizarFechaViaje(idBusqueda, new java.sql.Date(nuevaFechaViaje.getTime()));
+                int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+                reserva.mostrarReservas(jTable1, usuarioId);
+            } else {
+                JOptionPane.showMessageDialog(this, "Por favor, seleccione una nueva fecha de viaje.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una reserva para modificar.");
+        }*/
+    }//GEN-LAST:event_btnModificarFechaActionPerformed
+
+    private void btnMostrarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarEstadoActionPerformed
+        // TODO add your handling code here:
+        int filaSeleccionada = jTable1.getSelectedRow();
+    if (filaSeleccionada >= 0) {
+        int idBusquedaDetalle = (int) jTable1.getValueAt(filaSeleccionada, 0); // Suponiendo que el ID de la reserva está en la primera columna
+
+        // Llamada al método para obtener la información del vuelo
+        obtenerInformacionVuelo(idBusquedaDetalle);
+    } else {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona una reserva.");
+    }
+    }//GEN-LAST:event_btnMostrarEstadoActionPerformed
+
+    private void obtenerInformacionVuelo(int idBusquedaDetalle) {
+    String sql = "SELECT b.fecha_viaje, bd.horario, CASE " +
+                 "WHEN NOW() < bd.horario THEN 'A Tiempo' " +
+                 "WHEN NOW() > bd.horario AND NOW() < bd.horario + INTERVAL '1' HOUR THEN 'Retrasado' " +
+                 "ELSE 'Cancelado' " +
+                 "END AS estado " +
+                 "FROM busqueda b " +
+                 "JOIN busqueda_detalle bd ON b.id = bd.fkbusqueda " +
+                 "WHERE bd.id = ?";
+
+    try (Connection conexion = new Coneccion().estableceConexion();
+         PreparedStatement pstmt = conexion.prepareStatement(sql)) {
+
+        pstmt.setInt(1, idBusquedaDetalle);
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            Date fechaViaje = rs.getDate("fecha_viaje");
+            Time horario = rs.getTime("horario");
+            String estado = rs.getString("estado");
+
+            // Mostrar la información en un mensaje o en una nueva ventana
+            String mensaje = String.format("Fecha de Viaje: %s\nHorario: %s\nEstado: %s", 
+                                            fechaViaje.toString(), 
+                                            horario.toString(), 
+                                            estado);
+            JOptionPane.showMessageDialog(this, mensaje);
+        } else {
+            JOptionPane.showMessageDialog(this, "No se encontró información para la reserva seleccionada.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al obtener información del vuelo: " + e.getMessage());
+    }
+}
     /**
      * @param args the command line arguments
      */
@@ -162,6 +315,8 @@ public class GestionReservas extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnModificarFecha;
+    private javax.swing.JButton btnMostrarEstado;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

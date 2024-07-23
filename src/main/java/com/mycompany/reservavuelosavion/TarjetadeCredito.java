@@ -36,7 +36,7 @@ public class TarjetadeCredito extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        btnSiguente = new javax.swing.JButton();
+        btnPagar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtTitular = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -81,11 +81,11 @@ public class TarjetadeCredito extends javax.swing.JDialog {
 
         jPanel3.setBackground(new java.awt.Color(0, 153, 255));
 
-        btnSiguente.setFont(new java.awt.Font("Yu Gothic UI Semilight", 0, 20)); // NOI18N
-        btnSiguente.setText("Siguiente");
-        btnSiguente.addActionListener(new java.awt.event.ActionListener() {
+        btnPagar.setFont(new java.awt.Font("Yu Gothic UI Semilight", 0, 20)); // NOI18N
+        btnPagar.setText("Pagar");
+        btnPagar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSiguenteActionPerformed(evt);
+                btnPagarActionPerformed(evt);
             }
         });
 
@@ -95,14 +95,14 @@ public class TarjetadeCredito extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSiguente)
+                .addComponent(btnPagar)
                 .addGap(102, 102, 102))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(17, Short.MAX_VALUE)
-                .addComponent(btnSiguente)
+                .addComponent(btnPagar)
                 .addGap(14, 14, 14))
         );
 
@@ -228,7 +228,7 @@ public class TarjetadeCredito extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnSiguenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguenteActionPerformed
+    private void btnPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarActionPerformed
         // TODO add your handling code here:
         Pagos pagos = new Pagos();
         pagos.GuardarCredito(txtTitular, txtNumTarjetaCredito, txtMes, txtAño, txtCodSeguridad, ComboCuotas);
@@ -253,7 +253,7 @@ public class TarjetadeCredito extends javax.swing.JDialog {
     } else {
         JOptionPane.showMessageDialog(null, "No se pudo obtener el ID de la reserva.");
     }*/
-    }//GEN-LAST:event_btnSiguenteActionPerformed
+    }//GEN-LAST:event_btnPagarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -299,7 +299,7 @@ public class TarjetadeCredito extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> ComboCuotas;
-    private javax.swing.JButton btnSiguente;
+    private javax.swing.JButton btnPagar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
