@@ -45,6 +45,7 @@ public class BusquedaVuelos extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        btnReservas = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         comboOrigen = new javax.swing.JComboBox<>();
@@ -76,6 +77,13 @@ public class BusquedaVuelos extends javax.swing.JDialog {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Busqueda de Vuelos");
 
+        btnReservas.setText("Reservas");
+        btnReservas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReservasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -83,13 +91,20 @@ public class BusquedaVuelos extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(316, 316, 316)
                 .addComponent(jLabel1)
+                .addGap(77, 77, 77)
+                .addComponent(btnReservas)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabel1)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel1))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(36, 36, 36)
+                        .addComponent(btnReservas)))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
 
@@ -353,7 +368,7 @@ Vuelos vuelos = new Vuelos();
             System.out.println("Cantidad total de pasajeros: " + totalPasajeros);
 
             //Mostrar el diálogo InfoPasajero para cada pasajero
-            //int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+            //int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado(); no sirve/////
             /*do {
                 InfoPasajero infoPasajeroDialog = new InfoPasajero(null, true, busquedaDetalleId, usuarioId);
                 infoPasajeroDialog.setVisible(true);
@@ -375,6 +390,13 @@ Vuelos vuelos = new Vuelos();
         JOptionPane.showMessageDialog(null, "No se ha realizado ninguna búsqueda reciente.");
     }
     }//GEN-LAST:event_tbResultadoVuelosMouseClicked
+
+    private void btnReservasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReservasActionPerformed
+        // TODO add your handling code here:
+        
+       GestionReservas gestionReservasDialog = new GestionReservas(null, true);
+       gestionReservasDialog.setVisible(true);
+    }//GEN-LAST:event_btnReservasActionPerformed
 
     /**
      * @param args the command line arguments
@@ -420,6 +442,7 @@ Vuelos vuelos = new Vuelos();
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnReservas;
     private javax.swing.JComboBox<String> comboClase;
     private javax.swing.JComboBox<String> comboDestino;
     private javax.swing.JComboBox<String> comboOrigen;

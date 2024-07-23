@@ -16,7 +16,9 @@ import java.util.Properties;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Estudiante
@@ -46,7 +48,7 @@ public class Pasajero {
         return 1; 
     }*/
 
-public void guardarReserva() {
+/*public void guardarReserva() {
     Coneccion objetoConexion = new Coneccion();
     Connection conexion = null;
     PreparedStatement pstmt = null;
@@ -83,7 +85,120 @@ public void guardarReserva() {
             JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
         }
     }
+}*/
+    
+    public int guardarReserva() {
+    Coneccion objetoConexion = new Coneccion();
+    Connection conexion = null;
+    PreparedStatement pstmt = null;
+    ResultSet generatedKeys = null;
+    int reservaId = -1; // Valor por defecto en caso de error
+
+    try {
+        // Establecer la conexión a la base de datos
+        conexion = objetoConexion.estableceConexion();
+
+        // Consulta SQL para insertar una nueva reserva
+        String sql = "INSERT INTO reservas (fkbusqueda_detalle, usuario_id, fecha_reserva) VALUES (?, ?, CURRENT_TIMESTAMP)";
+
+        pstmt = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setInt(1, busquedaDetalleIdSeleccionada);
+        pstmt.setInt(2, SesionUtil.obtenerIdUsuarioAutenticado()); // Usar el ID del usuario desde SesionUtil
+
+        // Ejecutar la consulta de inserción
+        int rowsInserted = pstmt.executeUpdate();
+
+        // Verificar si la inserción fue exitosa
+        if (rowsInserted > 0) {
+            // Obtener el ID generado
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                reservaId = generatedKeys.getInt(1);
+                JOptionPane.showMessageDialog(null, "Reserva guardada con éxito. ID de reserva: " + reservaId);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo obtener el ID de la reserva.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se pudo guardar la reserva.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al guardar la reserva: " + e.getMessage());
+    } finally {
+        try {
+            // Cerrar el ResultSet, PreparedStatement y la conexión
+            if (generatedKeys != null) generatedKeys.close();
+            if (pstmt != null) pstmt.close();
+            if (conexion != null) conexion.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
+        }
+    }
+    
+    return reservaId;
 }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    //FUNCIONA Y DA EL ID DE LA RESERVA
+/*public int guardarReserva() {
+    Coneccion objetoConexion = new Coneccion();
+    Connection conexion = null;
+    PreparedStatement pstmt = null;
+    ResultSet generatedKeys = null;
+    int reservaId = -1; // Valor por defecto en caso de error
+
+    try {
+        // Establecer la conexión a la base de datos
+        conexion = objetoConexion.estableceConexion();
+
+        // Consulta SQL para insertar una nueva reserva
+        String sql = "INSERT INTO reservas (fkbusqueda_detalle, usuario_id, fecha_reserva) VALUES (?, ?, CURRENT_TIMESTAMP)";
+
+        pstmt = conexion.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        pstmt.setInt(1, busquedaDetalleIdSeleccionada);
+        pstmt.setInt(2, SesionUtil.obtenerIdUsuarioAutenticado()); // Usar el ID del usuario desde SesionUtil
+
+        // Ejecutar la consulta de inserción
+        int rowsInserted = pstmt.executeUpdate();
+
+        // Verificar si la inserción fue exitosa
+        if (rowsInserted > 0) {
+            // Obtener el ID generado
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                reservaId = generatedKeys.getInt(1);
+                JOptionPane.showMessageDialog(null, "Reserva guardada con éxito. ID de reserva: " + reservaId);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo obtener el ID de la reserva.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No se pudo guardar la reserva.");
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al guardar la reserva: " + e.getMessage());
+    } finally {
+        try {
+            // Cerrar el ResultSet, PreparedStatement y la conexión
+            if (generatedKeys != null) generatedKeys.close();
+            if (pstmt != null) pstmt.close();
+            if (conexion != null) conexion.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al cerrar la conexión: " + e.getMessage());
+        }
+    }
+    
+    return reservaId;
+}*/
+
+
 
     private String nombre;
     private String apellido;
@@ -245,4 +360,48 @@ public void guardarReserva() {
         JOptionPane.showMessageDialog(null, "Error al registrar usuario: " + e.getMessage());
     }
 }
+      
+      
+      
+      
+      public void mostrarReservas(JTable tablaReservas) {
+        int usuarioId = SesionUtil.obtenerIdUsuarioAutenticado();
+        String consulta = "SELECT * FROM reservas WHERE usuario_id = ?";
+
+          DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("ID");
+        modelo.addColumn("ID Busqueda Detalle");
+        modelo.addColumn("Usuario ID");
+        modelo.addColumn("Fecha Reserva");
+
+        try (Connection conexion = new Coneccion().estableceConexion();
+             PreparedStatement pstmt = conexion.prepareStatement(consulta)) {
+
+            pstmt.setInt(1, usuarioId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Object[] fila = new Object[4];
+                fila[0] = rs.getInt("id");
+                fila[1] = rs.getInt("fkbusqueda_detalle");
+                fila[2] = rs.getInt("usuario_id");
+                fila[3] = rs.getTimestamp("fecha_reserva");
+                modelo.addRow(fila);
+            }
+            rs.close();
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al obtener las reservas: " + e.getMessage());
+        }
+
+        tablaReservas.setModel(modelo);
+    }
+      
+      
+
+
+
+      
+      
+      
 }

@@ -11,7 +11,8 @@ import javax.swing.JOptionPane;
  * @author Estudiante
  */
 public class TarjetadeCredito extends javax.swing.JDialog {
-
+    private int busquedaDetalleId;
+    private int reservaId;
     /**
      * Creates new form TarjetadeCredito
      */
@@ -229,35 +230,29 @@ public class TarjetadeCredito extends javax.swing.JDialog {
 
     private void btnSiguenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguenteActionPerformed
         // TODO add your handling code here:
-          // Obtener los valores de los campos de texto
-    /*String titular = txtTitular.getText();
-    String numTarjeta = txtNumTarjetaCredito.getText();
-    int mes = Integer.parseInt(txtMes.getText());
-    int año = Integer.parseInt(txtAño.getText());
-    String codSeguridad = txtCodSeguridad.getText();
-    int cuotas = Integer.parseInt(ComboCuotas.getSelectedItem().toString());
-
-    // Precio base (puedes cambiar esto según tus necesidades)
-    Pasajero pasajero = new Pasajero();
+        Pagos pagos = new Pagos();
+        pagos.GuardarCredito(txtTitular, txtNumTarjetaCredito, txtMes, txtAño, txtCodSeguridad, ComboCuotas);
     
-    pasajero.setBusquedaDetalleIdSeleccionada(ALLBITS);
-    double precioBase = obtenerPrecioReserva(reservaId); // Asumiendo que tienes una función para obtener el precio de la reserva
-
-    // Calcular el precio según las cuotas
-    double precioFinal = calcularPrecioConCuotaS(precioBase, cuotas);
-
-    // Mostrar el cuadro de diálogo de confirmación
-    int respuesta = JOptionPane.showConfirmDialog(this, 
-        "El precio final con " + cuotas + " cuotas es: $" + precioFinal + "\n¿Deseas continuar?",
-        "Confirmación de Pago", JOptionPane.YES_NO_OPTION);
-
-    if (respuesta == JOptionPane.YES_OPTION) {
-        // Proceder con el pago
-        Pagos pagos = new Pagos();
+    // Obtener el ID de la reserva
+   //Pasajero pasajero = new Pasajero();
+   /* int reservaId = pasajero.guardarReserva(); // Obtén el ID de la reserva después de guardarla
+    
+    // Verifica que reservaId sea válido antes de llamar a GuardarCredito
+    if (reservaId != -1) {
+        // Llamar al método GuardarCredito con los parámetros de los campos de texto y el ID de la reserva
         pagos.GuardarCredito(txtTitular, txtNumTarjetaCredito, txtMes, txtAño, txtCodSeguridad, ComboCuotas);
-        */
-        Pagos pagos = new Pagos();
-        pagos.GuardarCredito(txtTitular, txtNumTarjetaCredito, txtMes, txtAño, txtCodSeguridad, ComboCuotas);
+        /*pagos.GuardarCredito(
+            txtTitular, 
+            txtNumTarjetaCredito, 
+            txtMes, 
+            txtAño, 
+            txtCodSeguridad, 
+            ComboCuotas, 
+            reservaId // Pasar el ID de reserva para asociar el pago
+        );
+    } else {
+        JOptionPane.showMessageDialog(null, "No se pudo obtener el ID de la reserva.");
+    }*/
     }//GEN-LAST:event_btnSiguenteActionPerformed
 
     /**
